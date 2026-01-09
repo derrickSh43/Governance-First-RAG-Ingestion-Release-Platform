@@ -69,7 +69,8 @@ A **compliance & observability surface** for audits and operations
 - Full audit trace lineage (source → doc → chunk)
 - Observability runs with exportable audit packs
 
-  <img width="1920" height="1080" alt="Screenshot 2026-01-07 190449" src="https://github.com/user-attachments/assets/c1bcbcdc-f6a0-41c2-bd35-28ba625f27c0" />
+
+<img width="1920" height="1080" alt="Screenshot 2026-01-09 144430" src="https://github.com/user-attachments/assets/f3a26124-1bf8-4d01-ae45-e458a55e958c" />
 
 
 ---
