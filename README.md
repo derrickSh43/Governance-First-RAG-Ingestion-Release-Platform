@@ -17,7 +17,20 @@ Unlike typical RAG pipelines that hard-wire a chunker, embedding model, and vect
 - Quality, safety, and compliance are enforced through **gates**
 - All actions are **observable and auditable**
 
-**Perfect for:** Platform engineers, security teams, and AI teams building RAG infrastructure at scale.
+---
+
+## 👥 Who This Is For
+
+This platform is designed for organizations that need to **operate knowledge as a governed production system**:
+
+- **Security & Compliance Teams** — Need auditability, lineage tracking, and governance gates
+- **Platform Engineers** — Building RAG infrastructure that scales across domains
+- **AI/ML Teams** — Want reliable ingestion with quality gates, not one-off scripts
+- **Enterprises** — Treating knowledge/data as regulated, versioned assets
+
+**This is an enterprise control plane.** Installation, deployment, and operational support are available through commercial licensing.
+
+---
 
 ---
 
@@ -80,6 +93,23 @@ Quality and safety checkpoints that must pass before promotion:
 - **Health Gate** — Validate ingestion quality (chunk counts, embedding success rates)
 - **Golden Queries** — Validate retrieval quality before promotion
 - **PII Gate** — Block sensitive data and require override justification
+
+---
+
+## ⚖️ What's NOT Included
+
+To set expectations:
+
+- **This is a control plane, not a full RAG application framework.** It handles ingestion, governance, and retrieval. You bring your own:
+  - LLM service for response generation
+  - Frontend chat UI (we provide the knowledge retrieval backend)
+  - Prompt engineering and application logic
+  
+- **No embedded LLM.** Embeddings and vector operations are pluggable—you choose your backend (OpenAI, local models, Bedrock, etc.)
+
+- **No out-of-the-box UI for end users.** The included React UI is for **operators and knowledge administrators**. End-user chat interfaces integrate via the `/retrieve` API.
+
+- **Installation and deployment are premium services.** We handle setup, configuration, and ongoing operational support through commercial licensing.
 
 ---
 
