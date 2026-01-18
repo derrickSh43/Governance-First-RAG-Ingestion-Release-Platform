@@ -1,184 +1,515 @@
-# 🛡️ Governance-First RAG Ingestion & Release Platform
+# Ingestion Service
 
-> RAG operations infrastructure for teams running production RAG at scale — not a chatbot demo.
+> **Governed RAG ingestion + retrieval** — A production-ready control plane for building auditable knowledge bases with release workflows, quarantine handling, and comprehensive governance.
 
-A governance-first ingestion admin that turns raw sources into auditable, production-ready RAG releases with connectors, health gates, quarantine, and observability.
-
----
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/47b9b633-0af2-4dfa-8a83-d2eda74229ea" />
-
-## 🚩 Why This Exists
-
-Most RAG systems fail after the demo — not because embeddings break, but because there is:
-
-- ❌ No controlled release process
-- ❌ No rollback when data regresses
-- ❌ No audit trail or lineage
-- ❌ No operational or compliance proof
-  
-<img width="1920" height="1080" alt="Screenshot 2026-01-07 190434" src="https://github.com/user-attachments/assets/4d8f84d5-76b7-4fd1-82b2-cb2daacea335" />
-
-
-
-This platform addresses those gaps by providing a **control plane for ingestion, releases, and quality**.
+Knowledge is not a script. It's a **production system**.
 
 ---
 
-## 🧠 What This Platform Is
+## 🎯 What is this?
 
-An **end-to-end ingestion workflow**: capture → ingest → release → validate
+A modular ingestion control plane that transforms raw content into governed, retrievable knowledge. Ingest from URLs, uploads, and connectors. Apply policies, chunk intelligently, generate embeddings, and ship through release gates—all with full audit trails and RBAC.
 
-A **release governance layer** with promotion, rollback, merge, and audit history
+Unlike typical RAG pipelines that hard-wire a chunker, embedding model, and vector database into a single script, this system treats ingestion as **software delivery**:
 
-A **quality gate system** to catch regressions before production
+- Content moves through a **release lifecycle** (ingest → validate → promote → rollback)
+- Every stage is **pluggable and policy-driven**
+- Quality, safety, and compliance are enforced through **gates**
+- All actions are **observable and auditable**
 
-A **compliance & observability surface** for audits and operations
-
-**Designed to run on-prem or in private VPCs.**
-
----
-
-## 🧩 Core Capabilities
-
-### 1️⃣ Ship RAG Safely
-
-- Guided ingestion runs (single, batch, file)
-- Versioned releases per domain
-- Promotion, rollback, merge, lock/unlock
-- Retrieval smoke testing before activation
-
-### 2️⃣ Keep Data Fresh with Connectors
-
-- Connector-based ingestion (URL lists supported)
-- Test → run → history per connector
-- Domain-scoped connectors and releases
-
-  <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/e1615b79-900a-460b-8451-cfd0659ba6ef" />
-
-
-### 3️⃣ Catch Regressions Before Production
-
-- Health gates and golden query execution
-- Regression detection prior to promotion
-- Quarantine center for blocking artifacts
-
-### 4️⃣ Prove Compliance & Operations
-
-- Server-side RBAC enforcement
-- Permission-aware UI states
-- Full audit trace lineage (source → doc → chunk)
-- Observability runs with exportable audit packs
-
-
-<img width="1920" height="1080" alt="Screenshot 2026-01-09 144430" src="https://github.com/user-attachments/assets/f3a26124-1bf8-4d01-ae45-e458a55e958c" />
-
+**Perfect for:** Platform engineers, security teams, and AI teams building RAG infrastructure at scale.
 
 ---
 
-## 🔐 Enterprise Configuration (Built In)
+## ✨ Key Features
 
-- **SSO (OIDC)** configuration and test
-- **RBAC** role mapping and permission preview
-- **Audit event** configuration and log destinations
-- **Evidence pack** downloads (system + release)
-  
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/153726db-95a4-4a07-b297-30f21a68ae66" />
-
----
-
-## 📊 What's Actually Implemented
-
-No speculative claims. No roadmap padding. From the code:
-
-- ✅ 3 connector types: URL list, S3, local folder
-- ✅ 8 connector API endpoints: CRUD, test, run, run history
-- ✅ 15 configuration endpoints: SSO, RBAC, audit, evidence packs
-- ✅ RBAC enforced server-side (not just UI)
-- ✅ Full audit lineage for RAG units
-- ✅ End-to-end workflow: capture → ingest → release → retrieve
+| Feature | What it does |
+|---------|--------------|
+| **Release Lifecycle** | Create → Validate → Promote → Rollback. Manage knowledge like software. |
+| **Quarantine Workflows** | Automatically flag suspicious or policy-breaking inputs. Apply manual fixes. |
+| **Health Gates + Golden Queries** | Validate ingestion and retrieval quality before promoting to production. |
+| **Domain-Scoped Governance** | Isolated namespaces with their own policies, connectors, and RBAC. |
+| **Audit & Evidence Packs** | Download compliance reports, lineage traces, and decision records. |
+| **Pluggable Backends** | Swap embeddings, vector stores, and chunking strategies without rewrites. |
+| **Observability** | Step-level telemetry, run history, and append-only event logs. |
+| **Enterprise Auth** | OIDC SSO + domain-scoped RBAC. |
 
 ---
 
-## ⚠️ Known Limitations
+## 🏗 Core Concepts
 
-- S3 and local folder connectors currently support test only
-- Connector scheduling/automation not yet implemented
-- System evidence pack is a configuration snapshot (logs roadmapped)
-- Connector run history UI expects some fields not yet returned by API
+### Domains
+A **Domain** is a governed namespace for knowledge—e.g., `finance`, `security`, `support`, `engineering`.
 
-This project favors **production honesty over demo theater**.
+Each domain has:
+- Its own connectors and ingestion sources
+- Its own chunking and embedding policies
+- Its own RBAC scope and audit history
+- Its own releases and vector stores
 
----
+**Why?** Isolation, compliance, and ownership boundaries.
 
-## 🏗️ Local Development
+### Releases
+A **Release** is a versioned snapshot of your knowledge base.
 
-```bash
-# Backend + frontend
-./start_services.ps1
-
-# Backend only
-./start_backend.ps1
+Every ingestion run produces a release that moves through stages:
+```
+capture → distill → canonicalize → chunk → embed → index → validate → promote
 ```
 
-- **API**: http://127.0.0.1:8002
-- **UI**: http://127.0.0.1:5173 or 5174
+Releases can be promoted, merged, locked, rolled back, and audited—just like code.
+
+### Artifacts
+Immutable outputs produced by each ingestion stage:
+
+| Stage | Output | Purpose |
+|-------|--------|---------|
+| **Capture** | Raw HTML / files | Source evidence |
+| **Distill** | Clean text | Noise removal |
+| **Canonicalize** | Structured objects | Normalized content |
+| **Chunk** | Chunk JSON | Retrieval units |
+| **Embed** | Vector arrays | Semantic representation |
+| **Index** | Vector index | Queryable store |
+
+All artifacts are linked to releases, domains, and audit traces.
+
+### Gates
+Quality and safety checkpoints that must pass before promotion:
+
+- **Quarantine Gate** — Isolate suspicious inputs
+- **Health Gate** — Validate ingestion quality (chunk counts, embedding success rates)
+- **Golden Queries** — Validate retrieval quality before promotion
+- **PII Gate** — Block sensitive data and require override justification
 
 ---
 
-## 🎥 Demo Flow (10–12 minutes)
+## 🚀 Quick Start
 
-1. Select domain → observe scoped releases
-   <img width="1920" height="1080" alt="Screenshot 2026-01-07 185105" src="https://github.com/user-attachments/assets/1ef11d84-7d61-4c85-b737-535a01053e46" />
+### Docker (Recommended)
 
-3. Run ingestion → show counts + release ID
-   <img width="1920" height="1080" alt="Screenshot 2026-01-07 185642" src="https://github.com/user-attachments/assets/aa52a2d1-68ab-4877-9b61-52a88b4ed04a" />
+```bash
+cd deploy
+docker compose up -d --build
+```
 
-5. Promote release → governance checks enforced
-6. Run golden queries → health gate results
-   <img width="1920" height="1080" alt="Screenshot 2026-01-07 190415" src="https://github.com/user-attachments/assets/e50b1dbf-14e5-469d-86b9-f7bd099207c8" />
+Open http://localhost:3000 in your browser.
 
-8. Open quarantine → blocking artifacts visible
-   <img width="1920" height="1080" alt="Screenshot 2026-01-07 190926" src="https://github.com/user-attachments/assets/17aead79-ad2a-4f8d-9a6d-abba4bb43f77" />
+### Local Development
 
-10. Inspect audit trace → full lineage
-11. Open observability → run timeline + artifacts
-    <img width="1920" height="1080" alt="Screenshot 2026-01-07 190449" src="https://github.com/user-attachments/assets/8edc55f6-95ae-4dfc-904a-bc907cef76b6" />
+**Backend:**
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Windows: .\.venv\Scripts\activate
+pip install -r requirements.txt
+python -m uvicorn api:app --host 127.0.0.1 --port 8000 --reload
+```
 
-13. Trigger RBAC denial → UI + API enforcement
-
-**Everything shown is logged, auditable, and exportable.**
-
----
-
-## 📌 What This Is (And Isn't)
-
-| This is NOT | This IS |
-|---|---|
-| A chatbot builder | A RAG ingestion & release control plane |
-| A vector database wrapper | An AI platform governance surface |
-| A SaaS-only demo tool | Infrastructure for production RAG teams |
+**Frontend:**
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
 ---
 
-## 🧭 Roadmap
+## 🔄 Core Workflows
 
-- [ ] Connector scheduling / automation
-- [ ] Full S3 and local ingestion support
-- [ ] Richer evidence packs (audit logs + metrics)
-- [ ] Connector run history field alignment
+### Ingest & Promote
+1. **Capture** raw content (URLs, files, connectors)
+2. **Ingest** into a release (normalize, chunk, embed)
+3. **Quarantine** suspicious items (policy violations, low quality)
+4. **Review** and apply fixes
+5. **Gate** with health checks and golden queries
+6. **Promote** to active release for retrieval
+
+### Query Your Knowledge Base
+```bash
+POST /retrieve
+{
+  "query": "What is your refund policy?",
+  "domain": "support",
+  "release_id": "prod-v1.2"  # or omit for active release
+}
+```
+
+Every query is audited and can be explained:
+```
+query → vectors → chunks → documents → sources → release
+```
 
 ---
 
-## 📖 Documentation
+## 🏭 Modular Ingestion Pipeline
 
-For more details on setup, architecture, and usage, see the `/docs` directory.
+The pipeline is explicitly modular and policy-driven:
+
+```
+[Connector] → Distiller → Canonicalizer → Chunker → Embeddings → Vector Store
+```
+
+Each layer is swappable without rewriting the system.
+
+### Distillation Layer (pluggable)
+Convert raw sources into clean text.
+- HTML cleaning, PDF extraction, Markdown normalization
+- Custom enterprise document filters
+
+### Canonicalization Layer
+Normalize content into structured, deterministic objects.
+- Section detection, metadata enrichment, language normalization
+- Source attribution for audit trails
+
+### Chunking Layer (policy-driven)
+Break content into retrieval-safe units with domain-specific policies.
+```json
+{
+  "policy": "default",
+  "max_chars": 2500,
+  "overlap": 200,
+  "semantic": true
+}
+```
+
+### Embeddings Layer (pluggable backends)
+Convert chunks into vectors.
+- **Local models** — Run embeddings in-process
+- **Cloud APIs** — OpenAI, Azure, Bedrock, Vertex
+- **Custom services** — Bring your own embedding backend
+
+### Vector Store Layer (pluggable backends)
+Index and retrieve vectors at scale.
+- **Local** — FAISS
+- **Cloud-native** — Qdrant, Weaviate, Pinecone
+- **Enterprise** — Custom search services
 
 ---
 
-## License
+## 📊 Architecture
 
-[Add your license here]
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      User Browser                            │
+│                                                               │
+│  ┌──────────────────────────────────────────────────────┐    │
+│  │  React + TypeScript + Vite                           │    │
+│  │  (UI for ingestion, releases, quarantine, queries)   │    │
+│  └──────────────────┬───────────────────────────────────┘    │
+└─────────────────────┼──────────────────────────────────────────┘
+                      │ HTTP/REST
+        ┌─────────────▼──────────────────┐
+        │  Nginx Reverse Proxy (SSL/TLS) │
+        └─────────────┬──────────────────┘
+                      │
+        ┌─────────────▼──────────────────────────────────────┐
+        │   FastAPI Backend                                   │
+        │  ┌───────────────────────────────────────────────┐  │
+        │  │ Ingestion Pipeline (modular stages)           │  │
+        │  │ Release Management + Promotion                │  │
+        │  │ Quarantine Workflows                          │  │
+        │  │ Retrieval Service + Query Audit               │  │
+        │  │ OIDC + Domain-Scoped RBAC                     │  │
+        │  │ Observability + Event Streaming               │  │
+        │  └───────────────────────────────────────────────┘  │
+        └─────────────┬──────────────────────────────────────┘
+                      │
+        ┌─────────────┴──────────────────────────┐
+        │                                         │
+   ┌────▼────────┐      ┌──────────────────┐   │
+   │  SQLite DBs │      │ File Storage     │   │
+   │             │      │ (artifacts,      │   │
+   │ • audit     │      │  chunks,         │   │
+   │ • traces    │      │  embeddings,     │   │
+   │ • telemetry │      │  vector index)   │   │
+   └─────────────┘      └──────────────────┘   │
+        │
+        └──────────────────────────────────────┘
+```
 
 ---
 
-**Built for teams that take RAG operations seriously.**
+## 📁 Project Structure
+
+```
+.
+├── api.py                      # FastAPI application (all routes)
+├── pipeline.py                 # Ingestion orchestration
+├── releases.py                 # Release lifecycle management
+├── quarantine.py               # Quarantine store & actions
+├── retrieval_service.py        # Query & retrieval logic
+├── observability.py            # JSONL event logging
+├── oidc.py                     # Authentication & sessions
+├── config.py                   # SSO/RBAC/audit configuration
+├── env.py                      # Runtime paths
+├── frontend/                   # React + TypeScript + Vite + Tailwind
+├── deploy/                     # Docker Compose + Nginx config
+├── db/                         # SQLite migrations
+├── docs/                       # Schemas & design notes
+├── data/                       # Default runtime data root
+└── tests/                      # Test suite
+```
+
+---
+
+## 💾 Storage & Persistence
+
+Data lives under `INGESTION_DATA_ROOT` (default: `./data`):
+
+```
+data/
+├── captures/           # Raw ingestion artifacts
+├── canonical/          # Normalized intermediate objects
+├── chunks/             # Processed chunks per release
+├── embeddings/         # Embedding vectors
+├── vector_index/       # Vector store/index files
+├── releases/           # Release metadata & active pointers
+├── quarantines/        # Quarantine records & decisions
+├── observability/      # JSONL event logs + metadata DB
+└── config/             # SSO, RBAC, audit, log destinations
+```
+
+**Databases:**
+- `observability/metadata.sqlite` — Internal telemetry
+- `audit_traces/trace_events.sqlite3` — Full audit trail
+
+---
+
+## 🔐 Security & Access Control
+
+### OIDC SSO
+Configure via the UI setup flow. Works with any OIDC provider:
+- Keycloak, Okta, Auth0, Azure AD, Google
+
+### Domain-Scoped RBAC
+- Assign roles per domain
+- Backend enforces permissions for sensitive operations
+- Custom claim mappings supported
+
+### Configuration
+```
+INGESTION_DATA_ROOT/config/
+├── oidc.json         # OIDC provider settings + claim mappings
+├── rbac.json         # Role-to-permission mappings per domain
+├── audit.json        # Event families & retention policies
+└── log_destinations/ # Where to ship events (Splunk, DataDog, etc.)
+```
+
+### Secrets Management
+- Use secret references (env/file) in production
+- No plaintext secrets in JSON config
+
+### Trust Boundaries
+```
+Browser → Nginx (TLS) → FastAPI → Storage / SQLite
+```
+
+**Production hardening:**
+- Run behind TLS + trusted reverse proxy
+- Lock down dev-mode auth endpoints
+- Prevent header spoofing with perimeter controls
+- Configure log shipping to external systems
+
+---
+
+## 📡 Observability & Auditability
+
+### Observability Model
+- Append-only JSONL events per domain
+- Run-level and step-level telemetry
+- Normalized event schema for analysis
+
+### Audit Model
+- SQLite trace store with full lineage
+- Artifact provenance tracking
+- Evidence packs for compliance and review
+
+### Query Audit
+Every retrieval query is traced:
+- Which release was used
+- Which chunks were returned
+- Which documents were sourced
+- User identity and timestamp
+- Quality signals and warnings
+
+Download evidence packs for compliance audits.
+
+---
+
+## 🛠 Configuration
+
+### Environment Variables
+
+```bash
+# Data storage
+INGESTION_DATA_ROOT=./data
+
+# OIDC (optional, configure via UI if not set)
+OIDC_ISSUER=https://your-idp.com
+OIDC_CLIENT_ID=your-client-id
+OIDC_CLIENT_SECRET=your-secret
+
+# Logging
+LOG_LEVEL=INFO
+```
+
+### Runtime Config Files
+
+All config persists in `INGESTION_DATA_ROOT/config/`:
+
+- **`oidc.json`** — OIDC provider & claim mappings
+- **`rbac.json`** — Group-to-role, default roles
+- **`audit.json`** — Enabled event families, retention
+- **`log_destinations/`** — External log shipping config
+
+---
+
+## 📖 API Overview
+
+### Ingestion
+
+```bash
+POST /ingest
+{
+  "domain": "support",
+  "source": "url" | "upload" | "connector",
+  "input": {...},
+  "release_id": "my-release"
+}
+```
+
+### Quarantine Management
+
+```bash
+GET /domains/{domain}/quarantine/{release_id}
+POST /domains/{domain}/quarantine/{release_id}/{item_id}/action
+{
+  "action": "retry" | "ignore" | "bypass",
+  "reason": "..."
+}
+```
+
+### Health Gates
+
+```bash
+POST /releases/{release_id}/validate
+{
+  "golden_queries": ["query1", "query2"],
+  "quality_threshold": 0.8
+}
+```
+
+### Promote to Production
+
+```bash
+POST /domains/{domain}/releases/{release_id}/promote
+```
+
+### Query Knowledge Base
+
+```bash
+POST /retrieve
+{
+  "query": "...",
+  "domain": "support",
+  "release_id": "prod-v1.2",  # optional, uses active if omitted
+  "top_k": 5
+}
+```
+
+### Explain Query Results
+
+```bash
+GET /retrieve/{query_id}/explain
+# Returns: query → vectors → chunks → documents → sources → release
+```
+
+---
+
+## 🔌 Extension Guide
+
+### Add a New Embedding Backend
+
+1. Implement `EmbeddingBackend` interface
+2. Register backend in config
+3. Configure domain to use it
+
+### Add a New Vector Store Backend
+
+1. Implement `VectorStore` interface
+2. Register backend in config
+3. Configure domain to use it
+
+### Add a New Gate
+
+1. Implement gate interface
+2. Emit observability + audit events
+3. Register gate in promotion flow
+
+### Add a New Connector
+
+1. Implement connector interface
+2. Add validation + test support
+3. Register in UI
+
+---
+
+## 📦 Deployment Models
+
+### Local Development
+```bash
+python -m uvicorn api:app --reload
+cd frontend && npm run dev
+```
+
+### Docker Compose
+```bash
+cd deploy
+docker compose up -d --build
+```
+
+### Kubernetes (Production)
+- Backend service (StatefulSet)
+- Frontend service (Deployment)
+- Persistent volume for artifacts
+- OIDC IdP integration (external)
+- Log aggregation sidecar
+
+---
+
+## 🧪 Testing
+
+```bash
+pytest tests/
+pytest tests/ -v --cov
+```
+
+---
+
+## 🤝 Contributing
+
+This repo is built around **release-based ingestion governance**. When modifying ingestion logic:
+
+- ✅ Preserve release boundaries
+- ✅ Emit audit traces
+- ✅ Normalize observability events
+- ✅ Use deterministic artifact paths
+
+---
+
+## 📄 License
+
+(Add your license here.)
+
+---
+
+## 📞 Support
+
+- **Issues:** GitHub Issues
+- **Docs:** `/docs` folder for schemas and design notes
+- **Architecture:** See [Feature Architecture Guide](./docs/architecture.md)
+
+---
+
+**Built for teams that treat knowledge as regulated production systems.**
+
+> Ingestion is not a script. It is a control plane.
